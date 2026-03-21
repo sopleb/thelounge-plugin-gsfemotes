@@ -1,4 +1,7 @@
 node_modules/
 emote-data.json
+emote-channels.json
+emote-settings.json
+channels.json
 *.log
 .DS_Store
