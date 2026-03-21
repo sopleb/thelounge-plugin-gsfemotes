@@ -1,0 +1,4 @@
+node_modules/
+emote-data.json
+*.log
+.DS_Store

@@ -1,0 +1,42 @@
+{
+  "name": "thelounge-plugin-emotes",
+  "version": "1.0.0",
+  "description": "Twitch-style emotes for The Lounge IRC client. Supports 7TV, BetterTTV, and FrankerFaceZ global emotes.",
+  "keywords": [
+    "thelounge",
+    "thelounge-plugin",
+    "emotes",
+    "twitch",
+    "7tv",
+    "bttv",
+    "betterttv",
+    "ffz",
+    "frankerfacez",
+    "irc"
+  ],
+  "homepage": "https://github.com/zendorea/thelounge-plugin-emotes",
+  "bugs": {
+    "url": "https://github.com/zendorea/thelounge-plugin-emotes/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zendorea/thelounge-plugin-emotes.git"
+  },
+  "license": "MIT",
+  "author": "Zendorea",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "emotes.css",
+    "client.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "thelounge": {
+    "supports": "^4.0.0",
+    "name": "Emotes"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
