@@ -13,7 +13,7 @@
 	if (window.__TL_EMOTES_LOADED) return;
 	window.__TL_EMOTES_LOADED = true;
 
-	const DATA_URL = "/packages/thelounge-plugin-emotes/emote-data.json";
+	const DATA_URL = "/packages/thelounge-plugin-gsfemotes/emote-data.json";
 	const REFRESH_INTERVAL = 3600000; // 1 hour
 	const PROCESSED_ATTR = "data-emotes-processed";
 
@@ -314,8 +314,8 @@
 		// Tab bar for providers
 		var tabBar = document.createElement("div");
 		tabBar.className = "emote-picker-tabs";
-		var tabs = ["All", "7TV", "BTTV", "FFZ"];
-		var tabMap = { "All": null, "7TV": "7tv", "BTTV": "bttv", "FFZ": "ffz" };
+		var tabs = ["All", "GSF", "7TV", "BTTV", "FFZ"];
+		var tabMap = { "All": null, "GSF": "gsf", "7TV": "7tv", "BTTV": "bttv", "FFZ": "ffz" };
 		var activeTab = null;
 
 		tabs.forEach(function (label) {
@@ -495,7 +495,7 @@
 		});
 
 		var channelList = [];
-		var CHANNELS_URL = "/packages/thelounge-plugin-emotes/emote-channels.json";
+		var CHANNELS_URL = "/packages/thelounge-plugin-gsfemotes/emote-channels.json";
 
 		function loadChannelList() {
 			return fetch(CHANNELS_URL)

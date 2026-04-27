@@ -1,11 +1,12 @@
 {
-  "name": "thelounge-plugin-emotes",
-  "version": "1.0.0",
-  "description": "Twitch-style emotes for The Lounge IRC client. Supports 7TV, BetterTTV, and FrankerFaceZ global emotes.",
+  "name": "thelounge-plugin-gsfemotes",
+  "version": "1.1.0",
+  "description": "GSF emotes plus Twitch-style 7TV, BetterTTV and FrankerFaceZ emotes for The Lounge IRC client.",
   "keywords": [
     "thelounge",
     "thelounge-plugin",
     "emotes",
+    "gsf",
     "twitch",
     "7tv",
     "bttv",
@@ -14,27 +15,23 @@
     "frankerfacez",
     "irc"
   ],
-  "homepage": "https://github.com/zendorea/thelounge-plugin-emotes",
-  "bugs": {
-    "url": "https://github.com/zendorea/thelounge-plugin-emotes/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/zendorea/thelounge-plugin-emotes.git"
-  },
   "license": "MIT",
-  "author": "Zendorea",
+  "author": {
+    "name": "sopleb",
+    "email": "sopleb@pm.me"
+  },
   "main": "index.js",
   "files": [
     "index.js",
     "emotes.css",
     "client.js",
+    "gsf-emotes.json",
     "README.md",
     "LICENSE"
   ],
   "thelounge": {
     "supports": "^4.0.0",
-    "name": "Emotes"
+    "name": "GSF Emotes"
   },
   "engines": {
     "node": ">=14.0.0"

@@ -10,7 +10,9 @@ let channelConfig = { channels: [] }; // list of Twitch usernames
 let settingsDir = null;
 const CACHE_TTL = 3600000; // 1 hour
 const FETCH_TIMEOUT = 10000;
-const PKG_NAME = "thelounge-plugin-emotes";
+const PKG_NAME = "thelounge-plugin-gsfemotes";
+const GSF_EMOTES_FILE = "gsf-emotes.json";
+const GSF_ALLOWED_HOST = "s3.us-central-1.wasabisys.com";
 
 // ---------------------------------------------------------------------------
 // HTTP helpers
@@ -83,7 +85,7 @@ function isValidEmoteUrl(url) {
 	}
 }
 
-const EMOTE_NAME_RE = /^[\w\-:()!]+$/;
+const EMOTE_NAME_RE = /^[\w\-:()!.]+$/;
 const MAX_EMOTE_NAME = 50;
 
 function isValidEmoteName(name) {
@@ -127,6 +129,50 @@ function parse7TVEmotes(data) {
 			};
 		}
 	}
+	return emotes;
+}
+
+// ---------------------------------------------------------------------------
+// GSF emote loading (from bundled JSON file)
+//
+// Format: { ":emoteName:": "https://s3.../file.gif", ... }
+// All URLs must be HTTPS on the allowed wasabi host.
+// ---------------------------------------------------------------------------
+
+function loadGSFEmotes() {
+	const log = thelounge ? thelounge.Logger : console;
+	const filePath = path.join(__dirname, GSF_EMOTES_FILE);
+	const emotes = {};
+
+	let raw;
+	try {
+		raw = fs.readFileSync(filePath, "utf-8");
+	} catch (e) {
+		log.warn(`GSF emotes file unavailable: ${e.message}`);
+		return emotes;
+	}
+
+	let data;
+	try {
+		data = JSON.parse(raw);
+	} catch (e) {
+		log.warn(`GSF emotes file is not valid JSON: ${e.message}`);
+		return emotes;
+	}
+
+	if (!data || typeof data !== "object") return emotes;
+
+	for (const [name, url] of Object.entries(data)) {
+		if (!isValidEmoteName(name)) continue;
+		if (!isValidEmoteUrl(url)) continue;
+		try {
+			if (new URL(url).hostname !== GSF_ALLOWED_HOST) continue;
+		} catch (e) {
+			continue;
+		}
+		emotes[name] = { u: url, u2: url, p: "gsf" };
+	}
+
 	return emotes;
 }
 
@@ -284,7 +330,15 @@ async function refreshEmotes() {
 	const results = await Promise.allSettled([fetch7TV(), fetchBTTV(), fetchFFZ()]);
 
 	const merged = {};
-	const counts = { "7tv": 0, bttv: 0, ffz: 0 };
+	const counts = { "7tv": 0, bttv: 0, ffz: 0, gsf: 0 };
+
+	// Load bundled GSF emotes first so they win conflicts (they're the
+	// reason this plugin exists — Twitch global names shouldn't shadow them).
+	const gsfEmotes = loadGSFEmotes();
+	for (const [name, emote] of Object.entries(gsfEmotes)) {
+		merged[name] = emote;
+		counts.gsf++;
+	}
 
 	for (const result of results) {
 		if (result.status === "fulfilled") {
@@ -318,7 +372,7 @@ async function refreshEmotes() {
 	emoteCache = { emotes: merged, lastFetch: Date.now() };
 	log.info(
 		`Loaded ${Object.keys(merged).length} emotes ` +
-		`(7TV: ${counts["7tv"]}, BTTV: ${counts.bttv}, FFZ: ${counts.ffz})` +
+		`(GSF: ${counts.gsf}, 7TV: ${counts["7tv"]}, BTTV: ${counts.bttv}, FFZ: ${counts.ffz})` +
 		(channels.length ? ` — channels: ${channels.join(", ")}` : "")
 	);
 
@@ -372,7 +426,9 @@ function writeChannelList() {
 function injectClientScript() {
 	const scriptTag = `<script src="/packages/${PKG_NAME}/client.js" defer></script>`;
 	const log = thelounge ? thelounge.Logger : console;
-	const emoteCdns = "https://cdn.7tv.app https://cdn.betterttv.net https://cdn.frankerfacez.com";
+	const emoteCdns =
+		"https://cdn.7tv.app https://cdn.betterttv.net https://cdn.frankerfacez.com " +
+		`https://${GSF_ALLOWED_HOST}`;
 
 	try {
 		const http = require("http");
